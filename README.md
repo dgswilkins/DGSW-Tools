@@ -1,0 +1,23 @@
+# DGSW-Tools
+This module contains functions for daily use. Currently defined:
+- Clear-RecentFiles 
+- Connect-CBAService
+- Connect-LocalExchange
+- Disconnect-LocalExchange
+- Connect-VCenter 
+- Connect-VMConsole 
+- Find-OutlookEmails
+- Get-MyPublicIP 
+- Get-SavedCred 
+- New-SavedCred 
+- Get-StringHash 
+- Get-wslLocation
+- Import-vcpkg 
+- New-IsoFile 
+- Open-WinTool
+- Optimize-MyVM 
+- Remove-OldModules 
+- Show-TerminalColors 
+- Switch-DarkModeState
+- Update-SourceAnchor
+- wslcompact
