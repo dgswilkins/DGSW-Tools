@@ -392,6 +392,8 @@ function Connect-LocalExchange {
         if ($env:ExSession) {
             Write-Verbose 'Already connected to Exchange'
         } else {
+            # Note that https:// is not supported for on-premises Exchange connections
+            # https://learn.microsoft.com/en-us/powershell/exchange/connect-to-exchange-servers-using-remote-powershell?view=exchange-ps
             if (!$UserCredentials) {
                 Write-Error 'No credentials found. Please run New-SavedCred to create credentials.'
                 return
