@@ -85,20 +85,65 @@ function Get-MyPublicIP {
 
 } #end function
 
-function Get-StringHash([String] $String, $HashName = 'MD5') {
+function Get-StringHash {
     <#
     .SYNOPSIS
+    Computes a hash of a string using the specified algorithm. Assumes that the string is UTF-8 encoded.
     .DESCRIPTION
+    Supports SHA1, SHA256, SHA512, SHA3_256, and SHA3_512.
     .PARAMETER String
+    The input string to hash.
     .PARAMETER HashName
+    The hash algorithm to use: SHA1, SHA256, SHA512, SHA3_256, or SHA3_512.
     .EXAMPLE
+    Get-StringHash -String "hello" -HashName SHA256
     #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)][string]$String,
+        [Parameter()][ValidateSet('SHA1', 'SHA256', 'SHA512', 'SHA3_256', 'SHA3_512')][string]$HashName = 'SHA256'
+    )
 
-    $StringBuilder = New-Object System.Text.StringBuilder
-    [System.Security.Cryptography.HashAlgorithm]::Create($HashName).ComputeHash([System.Text.Encoding]::UTF8.GetBytes($String)) | ForEach-Object {
-        [Void]$StringBuilder.Append($_.ToString('x2'))
+    switch ($HashName.ToUpper()) {
+        'SHA1' { 
+            $algo = [System.Security.Cryptography.SHA1]::Create() 
+            Write-Verbose 'Using SHA1 hash algorithm'
+        }
+        'SHA256' { 
+            $algo = [System.Security.Cryptography.SHA256]::Create() 
+            Write-Verbose 'Using SHA256 hash algorithm'
+        }
+        'SHA512' { 
+            $algo = [System.Security.Cryptography.SHA512]::Create() 
+            Write-Verbose 'Using SHA512 hash algorithm'
+        }
+        'SHA3_256' {
+            try {
+                $algo = [System.Security.Cryptography.SHA3Managed]::Create(256)
+                Write-Verbose 'Using SHA3_256 hash algorithm'
+            } catch {
+                throw 'SHA3_256 is not supported on this system. Please install a compatible .NET implementation.'
+            }
+        }
+        'SHA3_512' {
+            try {
+                $algo = [System.Security.Cryptography.SHA3Managed]::Create(512)
+                Write-Verbose 'Using SHA3_512 hash algorithm'
+            } catch {
+                throw 'SHA3_512 is not supported on this system. Please install a compatible .NET implementation.'
+            }
+        }
+        default { throw "Unsupported hash algorithm: $HashName" }
     }
-    $StringBuilder.ToString()
+
+    try {
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($String)
+        Write-Verbose "Computing hash for string: [$String]"
+        $hash = $algo.ComputeHash($bytes)
+        return ($hash | ForEach-Object { $_.ToString('x2') }) -join ''
+    } finally {
+        if ($algo) { $algo.Dispose() }
+    }
 }
 
 function Import-VCpkg {
