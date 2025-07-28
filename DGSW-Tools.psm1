@@ -90,25 +90,21 @@ function Get-StringHash {
     .SYNOPSIS
     Computes a hash of a string using the specified algorithm. Assumes that the string is UTF-8 encoded.
     .DESCRIPTION
-    Supports SHA1, SHA256, SHA512, SHA3_256, and SHA3_512.
+    Supports SHA256, SHA512, SHA3_256, and SHA3_512.
     .PARAMETER String
     The input string to hash.
     .PARAMETER HashName
-    The hash algorithm to use: SHA1, SHA256, SHA512, SHA3_256, or SHA3_512.
+    The hash algorithm to use: SHA256, SHA512, SHA3_256, or SHA3_512.
     .EXAMPLE
     Get-StringHash -String "hello" -HashName SHA256
     #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)][string]$String,
-        [Parameter()][ValidateSet('SHA1', 'SHA256', 'SHA512', 'SHA3_256', 'SHA3_512')][string]$HashName = 'SHA256'
+        [Parameter()][ValidateSet('SHA256', 'SHA512', 'SHA3_256', 'SHA3_512')][string]$HashName = 'SHA256'
     )
 
     switch ($HashName.ToUpper()) {
-        'SHA1' { 
-            $algo = [System.Security.Cryptography.SHA1]::Create() 
-            Write-Verbose 'Using SHA1 hash algorithm'
-        }
         'SHA256' { 
             $algo = [System.Security.Cryptography.SHA256]::Create() 
             Write-Verbose 'Using SHA256 hash algorithm'
