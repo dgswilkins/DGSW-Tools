@@ -115,18 +115,18 @@ function Get-StringHash {
         }
         'SHA3_256' {
             try {
-                $algo = [System.Security.Cryptography.SHA3Managed]::Create(256)
+                $algo = [System.Security.Cryptography.SHA3_256]::Create()
                 Write-Verbose 'Using SHA3_256 hash algorithm'
             } catch {
-                throw 'SHA3_256 is not supported on this system. Please install a compatible .NET implementation.'
+                throw 'SHA3_256 is not supported on this system. Please install a compatible .NET implementation (8 or later).'
             }
         }
         'SHA3_512' {
             try {
-                $algo = [System.Security.Cryptography.SHA3Managed]::Create(512)
+                $algo = [System.Security.Cryptography.SHA3_512]::Create()
                 Write-Verbose 'Using SHA3_512 hash algorithm'
             } catch {
-                throw 'SHA3_512 is not supported on this system. Please install a compatible .NET implementation.'
+                throw 'SHA3_512 is not supported on this system. Please install a compatible .NET implementation (8 or later).'
             }
         }
         default { throw "Unsupported hash algorithm: $HashName" }
