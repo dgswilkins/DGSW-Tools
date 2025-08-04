@@ -149,7 +149,8 @@ function Import-VCpkg {
     .SYNOPSIS
     Imports the vcpkg PowerShell module for tab completion.
     .DESCRIPTION
-    Loads the vcpkg PowerShell module to enable tab completion and other PowerShell integration features for vcpkg, if installed at the default location.
+    Loads the vcpkg PowerShell module to enable tab completion and other PowerShell integration
+    features for vcpkg, if installed at the default location.
     #>
 
     [cmdletbinding()]
@@ -390,7 +391,9 @@ function Connect-LocalExchange {
     .SYNOPSIS
     Connects to an on-premises Exchange server using saved credentials.
     .DESCRIPTION
-    Establishes a remote PowerShell session to an on-premises Exchange server using credentials retrieved from a saved credential file. If already connected, the function does nothing. Requires the Exchange server hostname to be set in the $env:ExchHost environment variable.
+    Establishes a remote PowerShell session to an on-premises Exchange server using credentials
+    retrieved from a saved credential file. If already connected, the function does nothing.
+    Requires the Exchange server hostname to be set in the $env:ExchHost environment variable.
     .EXAMPLE
     Connect-LocalExchange
     Connects to the Exchange server specified by $env:ExchHost using the saved 'sa' credentials.
@@ -427,7 +430,8 @@ function Disconnect-LocalExchange {
     .SYNOPSIS
     Disconnects from an on-premises Exchange server session.
     .DESCRIPTION
-    Removes the current remote PowerShell session to the on-premises Exchange server and clears the session environment variable. If not connected, the function does nothing.
+    Removes the current remote PowerShell session to the on-premises Exchange server
+    and clears the session environment variable. If not connected, the function does nothing.
     .EXAMPLE
     Disconnect-LocalExchange
     Disconnects the current session from the on-premises Exchange server.
@@ -449,7 +453,8 @@ function Connect-VCenter {
     .SYNOPSIS
     Connects to a VMware vCenter server using PowerCLI.
     .DESCRIPTION
-    Loads the VMware PowerCLI module if necessary, disconnects any existing vCenter sessions, and connects to the specified vCenter server.
+    Loads the VMware PowerCLI module if necessary, disconnects any existing vCenter
+    sessions, and connects to the specified vCenter server.
     .PARAMETER VC_Server
     The hostname or IP address of the vCenter server to connect to.
     .EXAMPLE
@@ -496,13 +501,17 @@ function New-IsoFile {
     If specified, uses files/folders currently on the clipboard as the source.
     .EXAMPLE
     New-IsoFile "c:\tools","c:Downloads\utils"
-    This command creates a .iso file in $env:temp folder (default location) that contains c:\tools and c:\downloads\utils folders. The folders themselves are included at the root of the .iso image. 
+    This command creates a .iso file in $env:temp folder (default location) that contains
+    c:\tools and c:\downloads\utils folders. The folders themselves are included at the root of the .iso image. 
     .EXAMPLE
     New-IsoFile -FromClipboard -Verbose
     Before running this command, select and copy (Ctrl-C) files/folders in Explorer first. 
     .EXAMPLE
     dir c:\WinPE | New-IsoFile -Path c:\temp\WinPE.iso -BootFile "${env:ProgramFiles(x86)}\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\efisys.bin" -Media DVDPLUSR -Title "WinPE"
-    This command creates a bootable .iso file containing the content from c:\WinPE folder, but the folder itself isn't included. Boot file etfsboot.com can be found in Windows ADK. Refer to IMAPI_MEDIA_PHYSICAL_TYPE enumeration for possible media types: https://learn.microsoft.com/en-us/windows/win32/api/imapi2/ne-imapi2-imapi_media_physical_type 
+    This command creates a bootable .iso file containing the content from c:\WinPE folder, but the
+    folder itself isn't included. Boot file etfsboot.com can be found in Windows ADK. 
+    Refer to IMAPI_MEDIA_PHYSICAL_TYPE enumeration for possible media types:
+    https://learn.microsoft.com/en-us/windows/win32/api/imapi2/ne-imapi2-imapi_media_physical_type 
     #>
 
     [CmdletBinding(DefaultParameterSetName = 'Source')]
@@ -706,7 +715,8 @@ function wslcompact {
     .SYNOPSIS
     Compacts the virtual disk of a WSL distribution.
     .DESCRIPTION
-    Exports and re-imports the specified (or all) WSL distributions to optimize and reduce the size of their ext4.vhdx virtual disk files.
+    Exports and re-imports the specified (or all) WSL distributions to optimize and
+    reduce the size of their ext4.vhdx virtual disk files.
     .PARAMETER distro
     The name of the WSL distribution to compact. If omitted, all distributions are processed.
     .EXAMPLE
@@ -747,7 +757,9 @@ function Connect-VMConsole {
     .SYNOPSIS
     Opens a Hyper-V VM console window for the specified virtual machine.
     .DESCRIPTION
-    Launches the Hyper-V VMConnect console for a given virtual machine by name, ID, or input object, optionally on a remote computer. Can also start the VM if it is currently off. Supports connecting by VM name, VM ID (GUID), or by passing a VM object directly.
+    Launches the Hyper-V VMConnect console for a given virtual machine by name, ID, or
+    input object, optionally on a remote computer. Can also start the VM if it is currently
+    off. Supports connecting by VM name, VM ID (GUID), or by passing a VM object directly.
     .PARAMETER ComputerName
     The name of the Hyper-V host computer. Defaults to the local computer.
     .PARAMETER Name
@@ -849,7 +861,8 @@ function Remove-OldModules {
     .SYNOPSIS
     Removes older versions of installed PowerShell modules.
     .DESCRIPTION
-    Finds and uninstalls all versions of installed modules except for the latest version. Useful for cleaning up disk space and avoiding version conflicts.
+    Finds and uninstalls all versions of installed modules except for the latest version.
+    Useful for cleaning up disk space and avoiding version conflicts.
     .PARAMETER Force
     If specified, forces removal of old module versions without confirmation.
     .EXAMPLE
@@ -883,7 +896,8 @@ function Show-TerminalColors {
     .SYNOPSIS
     Displays all possible foreground and background color combinations in the terminal.
     .DESCRIPTION
-    Iterates through all available console colors and prints sample text for each foreground/background combination, allowing you to preview how colors appear in your terminal.
+    Iterates through all available console colors and prints sample text for each
+    foreground/background combination, allowing you to preview how colors appear in your terminal.
     #>
 
     [cmdletbinding()]
@@ -904,15 +918,19 @@ function Show-TerminalColors {
     }
 }
 
-# from code found in the comments in this post:
-# https://social.technet.microsoft.com/Forums/windows/en-US/8ad4210c-6ca7-48bd-b218-0676bbf8600a/empty-recent-files-list-from-explorer-by-powershell-or-registry-means
 
 function Clear-RecentFiles {
     <#
     .SYNOPSIS
     Clears the list of recent files and unpinned folders from Quick Access in Windows Explorer.
     .DESCRIPTION
-    Removes all files from the user's Recent Files, AutomaticDestinations, and CustomDestinations folders (except system files), and unpins all folders from Quick Access that are not pinned. This helps maintain privacy and declutter the Quick Access and Recent Files lists in Windows Explorer.
+    Removes all files from the user's Recent Files, AutomaticDestinations, and CustomDestinations
+    folders (except system files), and unpins all folders from Quick Access that are not pinned.
+    This helps maintain privacy and declutter the Quick Access and Recent Files lists in Windows Explorer.
+    .NOTES
+    This was from code found in the comments in this post:
+    https://social.technet.microsoft.com/Forums/windows/en-US/8ad4210c-6ca7-48bd-b218-0676bbf8600a/empty-recent-files-list-from-explorer-by-powershell-or-registry-means
+
     #>
 
     [cmdletbinding()]
@@ -948,7 +966,8 @@ function Get-wslLocation {
     .SYNOPSIS
     Lists installed WSL distributions and their filesystem locations.
     .DESCRIPTION
-    Enumerates all Windows Subsystem for Linux (WSL) distributions registered for the current user and returns their names and filesystem paths.
+    Enumerates all Windows Subsystem for Linux (WSL) distributions registered for the
+    current user and returns their names and filesystem paths.
     #>
 
     [cmdletbinding()]
@@ -975,7 +994,9 @@ function Switch-DarkModeState {
     .SYNOPSIS
     Toggles between Windows dark and light theme modes.
     .DESCRIPTION
-    Checks the current Windows theme setting and switches between dark and light modes by applying the corresponding theme file. Also attempts to close the System Settings window if it appears.
+    Checks the current Windows theme setting and switches between dark and light modes
+    by applying the corresponding theme file. Also attempts to close the System Settings
+    window if it appears.
     #>
 
     [cmdletbinding()]
@@ -1004,7 +1025,9 @@ function Open-WinTool {
     .SYNOPSIS
     Opens common Windows administrative tools with saved credentials.
     .DESCRIPTION
-    Launches various Windows administrative consoles (such as Active Directory Users and Computers, DNS Manager, Group Policy Management Console, etc.) using saved credentials. Allows you to open one or more tools in a new process with the appropriate permissions.
+    Launches various Windows administrative consoles (such as Active Directory Users and Computers, 
+    DNS Manager, Group Policy Management Console, etc.) using saved credentials. Allows you to open
+    one or more tools in a new process with the appropriate permissions.
     .PARAMETER ADUC
     Opens Active Directory Users and Computers (dsa.msc).
     .PARAMETER ADDT
