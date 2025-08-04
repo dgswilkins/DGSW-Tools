@@ -36,7 +36,7 @@ function New-SavedCred() {
     .PARAMETER AdminName
     defines the user name to used when creating the credential
     .EXAMPLE
-    Get-SavedCred sample
+    New-SavedCred sample
     #>
 
     [CmdletBinding()]
