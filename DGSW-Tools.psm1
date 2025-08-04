@@ -1155,7 +1155,7 @@ function Update-SourceAnchor {
         [Parameter()][string]$B64String,
         [Parameter()][pscredential]$Credential
     )
-    $hexstring = ([system.convert]::FromBase64String($base64) | ForEach-Object ToString X2) -join ' '
+    $hexstring = ([system.convert]::FromBase64String($B64String) | ForEach-Object ToString X2) -join ' '
     $binary = [byte[]] ( -split (($hexstring -replace ' ', '') -replace '..', '0x$& '))
     Set-ADUser $User -Replace @{'mS-DS-ConsistencyGUID' = $binary } -Credential $Credential
 }
