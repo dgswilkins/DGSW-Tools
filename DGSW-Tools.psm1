@@ -1,7 +1,7 @@
 function Get-SavedCred() {
     <#
     .SYNOPSIS
-    Gets a saved credential from the module folder
+    Gets a saved credential
     .DESCRIPTION
     Imports credentials from files stored in the profile location
     .PARAMETER FileName
@@ -28,7 +28,7 @@ function Get-SavedCred() {
 function New-SavedCred() {
     <#
     .SYNOPSIS
-    Save a credential to the module folder
+    Save a new credential
     .DESCRIPTION
     Saves credentials into files stored in the profile location. 
     .PARAMETER FileName
@@ -56,7 +56,9 @@ function New-SavedCred() {
 function Get-MyPublicIP {
     <#
     .SYNOPSIS
+    Retrieves the public IPv4 and IPv6 addresses of the current machine.
     .DESCRIPTION
+    Uses external web services to determine the public-facing IPv4 and IPv6 addresses of the system. Returns the results as plain text.
     #>
 
     [cmdletbinding()]
@@ -88,9 +90,9 @@ function Get-MyPublicIP {
 function Get-StringHash {
     <#
     .SYNOPSIS
-    Computes a hash of a string using the specified algorithm. Assumes that the string is UTF-8 encoded.
+    Compute a hash of a string using the specified algorithm.
     .DESCRIPTION
-    Supports SHA256, SHA512, SHA3_256, and SHA3_512.
+    Supports SHA256, SHA512, SHA3_256, and SHA3_512. Assumes that the string is UTF-8 encoded.
     .PARAMETER String
     The input string to hash.
     .PARAMETER HashName
@@ -145,7 +147,9 @@ function Get-StringHash {
 function Import-VCpkg {
     <#
     .SYNOPSIS
+    Imports the vcpkg PowerShell module for tab completion.
     .DESCRIPTION
+    Loads the vcpkg PowerShell module to enable tab completion and other PowerShell integration features for vcpkg, if installed at the default location.
     #>
 
     [cmdletbinding()]
@@ -174,14 +178,23 @@ function Connect-CBAService {
     PnpOnline: Install-Module -Name PnP.PowerShell
     
     .PARAMETER Az
+    Connects to Azure using the Az PowerShell module and certificate-based authentication.
     .PARAMETER Subscription
+    The Azure subscription ID or name to use for the Az connection.
     .PARAMETER AzureAD
+    Connects to Azure Active Directory using certificate-based authentication.
     .PARAMETER Compliance
+    Connects to Microsoft 365 Compliance Center using certificate-based authentication.
     .PARAMETER ExchangeOnline
+    Connects to Exchange Online using certificate-based authentication.
     .PARAMETER CommandName
+    Specifies a list of Exchange Online commands to load when connecting (comma-separated).
     .PARAMETER Graph
+    Connects to Microsoft Graph using certificate-based authentication.
     .PARAMETER PnpOnline
+    Connects to SharePoint Online (PnP PowerShell) using certificate-based authentication.
     .PARAMETER AllServices
+    Connects to all supported Microsoft services using certificate-based authentication.
     .EXAMPLE
     Connect-CBAService -Az -AzureAD -Compliance -ExchangeOnline -Graph -PnpOnline
     #>
@@ -375,8 +388,12 @@ function Connect-CBAService {
 function Connect-LocalExchange {
     <#
     .SYNOPSIS
+    Connects to an on-premises Exchange server using saved credentials.
     .DESCRIPTION
+    Establishes a remote PowerShell session to an on-premises Exchange server using credentials retrieved from a saved credential file. If already connected, the function does nothing. Requires the Exchange server hostname to be set in the $env:ExchHost environment variable.
     .EXAMPLE
+    Connect-LocalExchange
+    Connects to the Exchange server specified by $env:ExchHost using the saved 'sa' credentials.
     #>
 
     #Get credentials
@@ -408,8 +425,12 @@ function Connect-LocalExchange {
 function Disconnect-LocalExchange {
     <#
     .SYNOPSIS
+    Disconnects from an on-premises Exchange server session.
     .DESCRIPTION
+    Removes the current remote PowerShell session to the on-premises Exchange server and clears the session environment variable. If not connected, the function does nothing.
     .EXAMPLE
+    Disconnect-LocalExchange
+    Disconnects the current session from the on-premises Exchange server.
     #>
 
     #Disconnect from Exchange
@@ -426,9 +447,13 @@ function Disconnect-LocalExchange {
 function Connect-VCenter {
     <#
     .SYNOPSIS
+    Connects to a VMware vCenter server using PowerCLI.
     .DESCRIPTION
+    Loads the VMware PowerCLI module if necessary, disconnects any existing vCenter sessions, and connects to the specified vCenter server.
     .PARAMETER VC_Server
+    The hostname or IP address of the vCenter server to connect to.
     .EXAMPLE
+    Connect-VCenter -VC_Server "vcenter01.domain.com"
     #>
 
     [CmdletBinding()]
@@ -456,12 +481,19 @@ function New-IsoFile {
     .DESCRIPTION
     The New-IsoFile cmdlet creates a new .iso file containing content from chosen folders 
     .PARAMETER Source
+    Specifies the files or folders to include in the ISO image.
     .PARAMETER Path
+    The output path for the new ISO file.
     .PARAMETER BootFile
+    The path to a boot image file to make the ISO bootable (optional).
     .PARAMETER Media
+    The media type for the ISO (e.g., DVDPLUSRW, BDR, etc.).
     .PARAMETER Title
+    The volume label/title for the ISO image.
     .PARAMETER Force
+    Overwrites the target ISO file if it already exists.
     .PARAMETER FromClipboard
+    If specified, uses files/folders currently on the clipboard as the source.
     .EXAMPLE
     New-IsoFile "c:\tools","c:Downloads\utils"
     This command creates a .iso file in $env:temp folder (default location) that contains c:\tools and c:\downloads\utils folders. The folders themselves are included at the root of the .iso image. 
@@ -570,7 +602,9 @@ function Optimize-MyVM {
     .DESCRIPTION
     The Optimize-MyVM cmdlet removes all snapshots from the Vm and then compacts the Disks
     .PARAMETER VMName
+    The name of the Hyper-V virtual machine to optimize.
     .PARAMETER NoCompact
+    If specified, skips the disk compaction step and only removes snapshots.
     .EXAMPLE
     Optimize-MyVM -VMName testVM
     #>
@@ -670,9 +704,13 @@ function Optimize-MyVM {
 function wslcompact {
     <#
     .SYNOPSIS
+    Compacts the virtual disk of a WSL distribution.
     .DESCRIPTION
+    Exports and re-imports the specified (or all) WSL distributions to optimize and reduce the size of their ext4.vhdx virtual disk files.
     .PARAMETER distro
+    The name of the WSL distribution to compact. If omitted, all distributions are processed.
     .EXAMPLE
+    wslcompact -distro Ubuntu
     #>
 
     [CmdletBinding()]
@@ -707,13 +745,31 @@ function wslcompact {
 function Connect-VMConsole {
     <#
     .SYNOPSIS
+    Opens a Hyper-V VM console window for the specified virtual machine.
     .DESCRIPTION
+    Launches the Hyper-V VMConnect console for a given virtual machine by name, ID, or input object, optionally on a remote computer. Can also start the VM if it is currently off. Supports connecting by VM name, VM ID (GUID), or by passing a VM object directly.
     .PARAMETER ComputerName
+    The name of the Hyper-V host computer. Defaults to the local computer.
     .PARAMETER Name
+    The name of the virtual machine to connect to.
     .PARAMETER Id
+    The GUID of the virtual machine to connect to.
     .PARAMETER InputObject
+    A Microsoft.HyperV.PowerShell.VirtualMachine object representing the VM.
     .PARAMETER StartVM
+    If specified, starts the VM if it is currently off before connecting.
     .EXAMPLE
+    Connect-VMConsole -Name "TestVM"
+    Opens a console window for the virtual machine named "TestVM" on the local computer.
+    .EXAMPLE
+    Connect-VMConsole -ComputerName "HV01" -Name "TestVM"
+    Opens a console window for "TestVM" on the remote Hyper-V host "HV01".
+    .EXAMPLE
+    Get-VM -Name "TestVM" | Connect-VMConsole
+    Opens a console window for the VM object returned by Get-VM.
+    .EXAMPLE
+    Connect-VMConsole -Name "TestVM" -StartVM
+    Starts "TestVM" if it is off, then opens a console window.
     #>
 
     [CmdletBinding(DefaultParameterSetName = 'name')]
@@ -791,9 +847,17 @@ function Connect-VMConsole {
 function Remove-OldModules {
     <#
     .SYNOPSIS
+    Removes older versions of installed PowerShell modules.
     .DESCRIPTION
+    Finds and uninstalls all versions of installed modules except for the latest version. Useful for cleaning up disk space and avoiding version conflicts.
     .PARAMETER Force
+    If specified, forces removal of old module versions without confirmation.
     .EXAMPLE
+    Remove-OldModules
+    Prompts for confirmation before uninstalling old module versions.
+    .EXAMPLE
+    Remove-OldModules -Force
+    Uninstalls all old module versions without prompting for confirmation.
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
@@ -817,7 +881,9 @@ function Remove-OldModules {
 function Show-TerminalColors {
     <#
     .SYNOPSIS
+    Displays all possible foreground and background color combinations in the terminal.
     .DESCRIPTION
+    Iterates through all available console colors and prints sample text for each foreground/background combination, allowing you to preview how colors appear in your terminal.
     #>
 
     [cmdletbinding()]
@@ -844,7 +910,9 @@ function Show-TerminalColors {
 function Clear-RecentFiles {
     <#
     .SYNOPSIS
+    Clears the list of recent files and unpinned folders from Quick Access in Windows Explorer.
     .DESCRIPTION
+    Removes all files from the user's Recent Files, AutomaticDestinations, and CustomDestinations folders (except system files), and unpins all folders from Quick Access that are not pinned. This helps maintain privacy and declutter the Quick Access and Recent Files lists in Windows Explorer.
     #>
 
     [cmdletbinding()]
@@ -878,7 +946,9 @@ function Clear-RecentFiles {
 function Get-wslLocation {
     <#
     .SYNOPSIS
+    Lists installed WSL distributions and their filesystem locations.
     .DESCRIPTION
+    Enumerates all Windows Subsystem for Linux (WSL) distributions registered for the current user and returns their names and filesystem paths.
     #>
 
     [cmdletbinding()]
@@ -903,7 +973,9 @@ function Get-wslLocation {
 function Switch-DarkModeState {
     <#
     .SYNOPSIS
+    Toggles between Windows dark and light theme modes.
     .DESCRIPTION
+    Checks the current Windows theme setting and switches between dark and light modes by applying the corresponding theme file. Also attempts to close the System Settings window if it appears.
     #>
 
     [cmdletbinding()]
@@ -930,13 +1002,25 @@ function Switch-DarkModeState {
 function Open-WinTool {
     <#
     .SYNOPSIS
+    Opens common Windows administrative tools with saved credentials.
     .DESCRIPTION
+    Launches various Windows administrative consoles (such as Active Directory Users and Computers, DNS Manager, Group Policy Management Console, etc.) using saved credentials. Allows you to open one or more tools in a new process with the appropriate permissions.
     .PARAMETER ADUC
+    Opens Active Directory Users and Computers (dsa.msc).
     .PARAMETER ADDT
+    Opens Active Directory Domains and Trusts (domain.msc).
     .PARAMETER DNS
+    Opens DNS Manager (dnsmgmt.msc).
     .PARAMETER DSAC
+    Opens Active Directory Administrative Center (dsac.exe).
     .PARAMETER GPMC
+    Opens Group Policy Management Console (gpmc.msc).
     .EXAMPLE
+    Open-WinTool -ADUC
+    Opens Active Directory Users and Computers with saved credentials.
+    .EXAMPLE
+    Open-WinTool -DNS -GPMC
+    Opens both DNS Manager and Group Policy Management Console with saved credentials.
     #>
 
     [CmdletBinding()]
@@ -1027,11 +1111,17 @@ function Open-WinTool {
 function Update-SourceAnchor {
     <#
     .SYNOPSIS
+    Updates the mS-DS-ConsistencyGUID attribute for a user in Active Directory.
     .DESCRIPTION
+    Converts a base64-encoded string to a binary GUID and sets it as the mS-DS-ConsistencyGUID attribute for the specified Active Directory user. This is typically used for source anchor updates in hybrid identity scenarios.
     .PARAMETER User
+    The sAMAccountName or distinguished name of the Active Directory user to update.
     .PARAMETER B64String
+    The base64-encoded string representing the GUID to set as the source anchor.
     .PARAMETER Credential
+    The credentials to use for the Active Directory operation.
     .EXAMPLE
+    Update-SourceAnchor -User "jdoe" -B64String "base64string==" -Credential (Get-Credential)
     .NOTES
     https://scripting.up-in-the.cloud/aadc/the-guid-conversion-carousel.html
     #>
@@ -1091,7 +1181,7 @@ function Get-CertificateThumbprint {
 function Find-OutlookEmails {
     <#
     .SYNOPSIS
-    Finds emails older than a specified date in Outlook folders and subfolders
+    Finds emails older than a specified date in Outlook folders and subfolders and optionally, delete them
     .DESCRIPTION
     Uses Outlook Interop to search through a specified folder and all subfolders
     to find emails older than the specified date.
