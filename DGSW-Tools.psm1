@@ -1502,34 +1502,34 @@ function New-myVM {
     }
 
     # Create the VM
-    hyper-v\New-VM -Name $VMName @VMParams
+    Hyper-V\New-VM -Name $VMName @VMParams
 
     # Add processors to the VM
-    hyper-v\Set-VMProcessor -VMName $VMName -Count 2
+    Hyper-V\Set-VMProcessor -VMName $VMName -Count 2
 
     # Configure dynamic memory
-    hyper-v\Set-VMMemory -VMName $VMName -DynamicMemoryEnabled $true -MinimumBytes 512MB -MaximumBytes 8192MB
+    Hyper-V\Set-VMMemory -VMName $VMName -DynamicMemoryEnabled $true -MinimumBytes 512MB -MaximumBytes 8192MB
 
     # Make sure the pre-reqs for Win 11 are set
     $HGOwner = Get-HgsGuardian UntrustedGuardian
     $KeyProtector = New-HgsKeyProtector -Owner $HGOwner -AllowUntrustedRoot
-    hyper-v\Set-VMKeyProtector -VMName $VMName -KeyProtector $KeyProtector.RawData
-    hyper-v\Enable-VMTPM -VMName $VMName
+    Hyper-V\Set-VMKeyProtector -VMName $VMName -KeyProtector $KeyProtector.RawData
+    Hyper-V\Enable-VMTPM -VMName $VMName
     
     # Attach 2 DVD drives to the VM
-    hyper-v\Add-VMDvdDrive -VMName $VMName
-    hyper-v\Add-VMDvdDrive -VMName $VMName
+    Hyper-V\Add-VMDvdDrive -VMName $VMName
+    Hyper-V\Add-VMDvdDrive -VMName $VMName
 
     # Connect the DVD drive to the ISO image
-    $dvds = hyper-v\Get-VMDvdDrive -VMName $VMName
-    $dvds[0] | hyper-v\Set-VMDvdDrive -Path "E:\Downloads\Microsoft\OS\WinPE_amd64-2507.iso"
-    $dvds[1] | hyper-v\Set-VMDvdDrive -Path "E:\Downloads\Microsoft\OS\Windows11\Insiders\$ISO"
+    $dvds = Hyper-V\Get-VMDvdDrive -VMName $VMName
+    $dvds[0] | Hyper-V\Set-VMDvdDrive -Path 'E:\Downloads\Microsoft\OS\WinPE_amd64-2507.iso'
+    $dvds[1] | Hyper-V\Set-VMDvdDrive -Path "E:\Downloads\Microsoft\OS\Windows11\Insiders\$ISO"
 
     # Set the boot order
-    $disks = hyper-v\Get-VMHardDiskDrive -VMName $VMName
+    $disks = Hyper-V\Get-VMHardDiskDrive -VMName $VMName
     #Set-VMFirmware -VMName $VMName -FirstBootDevice ($dvds[0])
-    hyper-v\Set-VMFirmware -VMName $VMName -BootOrder @($dvds[0], $disks[0])
+    Hyper-V\Set-VMFirmware -VMName $VMName -BootOrder @($dvds[0], $disks[0])
 
-    hyper-v\Set-VM -Name $VMName -CheckpointType Standard -AutomaticCheckpointsEnabled $false
+    Hyper-V\Set-VM -Name $VMName -CheckpointType Standard -AutomaticCheckpointsEnabled $false
 }
 # End of New-myVM function
