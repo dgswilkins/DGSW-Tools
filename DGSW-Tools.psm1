@@ -1341,26 +1341,52 @@ function Find-OutlookEmails {
         # Delete emails if requested
         if ($Delete -and $oldEmails.Count -gt 0) {
             Write-Verbose "`nDeleting $($oldEmails.Count) emails..."
+            # Recursive helper to search a folder tree for a folder matching the target FolderPath
+            function Find-FolderByPath {
+                param(
+                    [Parameter(Mandatory = $true)] $ParentFolder,
+                    [Parameter(Mandatory = $true)][string] $TargetPath
+                )
+                Write-Debug "Searching folder: $($ParentFolder.Name)"
+                try {
+                    Write-Debug "Checking folder: $($ParentFolder.FolderPath)"
+                    if ($ParentFolder.FolderPath -eq $TargetPath) {
+                        return $ParentFolder
+                    }
+                } catch {
+                    # Some folder objects may not expose FolderPath; ignore and continue
+                }
+
+                foreach ($sub in $ParentFolder.Folders) {
+                    $found = Find-FolderByPath -ParentFolder $sub -TargetPath $TargetPath
+                    if ($found) { return $found }
+                }
+                return $null
+            }
+
             foreach ($email in $oldEmails) {
                 try {
-                    # Find the folder object
-                    $folderObj = $namespace.Folders.Item($defaultStore.DisplayName)
-                    foreach ($folder in $folderObj.Folders) {
-                        if ($folder.FolderPath -eq $email.FolderPath) {
-                            # Find the mail item by subject and received time
-                            foreach ($item in $folder.Items) {
-                                if ($item.Class -eq 43 -and $item.Subject -eq $email.Subject -and $item.ReceivedTime -eq $email.ReceivedTime) {
+                    # Use recursive search starting from the mailbox root (folderObj)
+                    $foundFolder = Find-FolderByPath -ParentFolder $targetFolder -TargetPath $email.FolderPath
+                    if ($foundFolder) {
+                        foreach ($item in $foundFolder.Items) {
+                            if ($item.Class -eq 43 -and $item.Subject -eq $email.Subject -and $item.ReceivedTime -eq $email.ReceivedTime) {
+                                try {
+                                    Write-Debug "Deleting email: '$($item.Subject)' from folder '$($email.FolderPath)'"
                                     $item.Delete()
-                                    break
+                                } catch {
+                                    Write-Warning "Failed to delete item: $($_.Exception.Message)"
                                 }
+                                break
                             }
-                            break
                         }
+                    } else {
+                        Write-Verbose "Folder not found for path: $($email.FolderPath)"
                     }
-                    Write-Verbose "Deleted: $($email.Subject) [$($email.ReceivedTime)] from folder $($email.FolderPath)"
                 } catch {
-                    Write-Warning "Failed to delete: $($email.Subject) [$($email.ReceivedTime)] - $($_.Exception.Message)"
+                    Write-Warning "Failed to delete email: $($_.Exception.Message)"
                 }
+                Write-Verbose "Deleted $($oldEmails.IndexOf($email) + 1) of $($oldEmails.Count) emails..."
             }
         }
     
@@ -1384,7 +1410,7 @@ function Find-OutlookEmails {
                 $oldEmails | Sort-Object ReceivedTime | Export-Csv -Path $OutputPath -NoTypeInformation
                 Write-Verbose "Results exported to: $OutputPath"
             }
-        
+    
             # Show summary by folder
             if ($SummaryOnly) {
                 Write-Output "`nEmails by folder:"
