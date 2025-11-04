@@ -29,12 +29,12 @@ function Connect-LocalExchange {
             }
             $sessionParams = @{
                 ConfigurationName = 'Microsoft.Exchange'
-                ConnectionUri     = "http://$($env:ExchHost)/powershell"
+                ConnectionUri     = "http://$($env:ExchHost)/powershell" # DevSkim: ignore DS137138 because it is required by exchange connection
                 Credential        = $UserCredentials
                 AllowRedirection  = $true
                 Name              = 'Exchange'
             }
-            $session = New-PSSession @sessionParams // DevSkim: ignore DS137138 Required by exchange connection
+            $session = New-PSSession @sessionParams
             Import-PSSession $session
             $env:ExSession = $session.Name
             Write-Verbose 'Successfully connected to Exchange.'
