@@ -13,44 +13,52 @@ function Get-StringHash {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)][string]$String,
-        [Parameter()][ValidateSet('SHA256', 'SHA512', 'SHA3_256', 'SHA3_512')][string]$HashName = 'SHA256'
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string]$String,
+        [Parameter()][ValidateSet('SHA256', 'SHA512', 'SHA3_256', 'SHA3_512')]
+        [string]$HashName = 'SHA256'
     )
 
-    switch ($HashName.ToUpper()) {
-        'SHA256' { 
-            $algo = [System.Security.Cryptography.SHA256]::Create() 
-            Write-Verbose 'Using SHA256 hash algorithm'
-        }
-        'SHA512' { 
-            $algo = [System.Security.Cryptography.SHA512]::Create() 
-            Write-Verbose 'Using SHA512 hash algorithm'
-        }
-        'SHA3_256' {
-            try {
-                $algo = [System.Security.Cryptography.SHA3_256]::Create()
-                Write-Verbose 'Using SHA3_256 hash algorithm'
-            } catch {
-                throw 'SHA3_256 is not supported on this system. Please install a compatible .NET implementation (8 or later).'
+    begin {
+        switch ($HashName.ToUpper()) {
+            'SHA256' { 
+                $algo = [System.Security.Cryptography.SHA256]::Create() 
+                Write-Verbose 'Using SHA256 hash algorithm'
             }
-        }
-        'SHA3_512' {
-            try {
-                $algo = [System.Security.Cryptography.SHA3_512]::Create()
-                Write-Verbose 'Using SHA3_512 hash algorithm'
-            } catch {
-                throw 'SHA3_512 is not supported on this system. Please install a compatible .NET implementation (8 or later).'
+            'SHA512' { 
+                $algo = [System.Security.Cryptography.SHA512]::Create() 
+                Write-Verbose 'Using SHA512 hash algorithm'
             }
+            'SHA3_256' {
+                try {
+                    $algo = [System.Security.Cryptography.SHA3_256]::Create()
+                    Write-Verbose 'Using SHA3_256 hash algorithm'
+                } catch {
+                    throw 'SHA3_256 is not supported on this system. Please install a compatible .NET implementation (8 or later).'
+                }
+            }
+            'SHA3_512' {
+                try {
+                    $algo = [System.Security.Cryptography.SHA3_512]::Create()
+                    Write-Verbose 'Using SHA3_512 hash algorithm'
+                } catch {
+                    throw 'SHA3_512 is not supported on this system. Please install a compatible .NET implementation (8 or later).'
+                }
+            }
+            default { throw "Unsupported hash algorithm: $HashName" }
         }
-        default { throw "Unsupported hash algorithm: $HashName" }
     }
-
-    try {
-        $bytes = [System.Text.Encoding]::UTF8.GetBytes($String)
-        Write-Verbose "Computing hash for string: [$String]"
-        $hash = $algo.ComputeHash($bytes)
-        return ($hash | ForEach-Object { $_.ToString('x2') }) -join ''
-    } finally {
+    process {
+        try {
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($String)
+            Write-Verbose "Computing hash for string: [$String]"
+            $hash = $algo.ComputeHash($bytes)
+            ($hash | ForEach-Object { $_.ToString('x2') }) -join ''
+        } catch {
+            throw $_
+        }
+    }
+    end {
         if ($algo) { $algo.Dispose() }
     }
 }
