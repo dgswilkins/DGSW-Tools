@@ -27,7 +27,14 @@ function Connect-LocalExchange {
                 Write-Error 'No credentials found. Please run New-SavedCred to create credentials.'
                 return
             }
-            $session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri "http://$($env:ExchHost)/powershell" -Credential $UserCredentials -AllowRedirection -Name 'Exchange'
+            $sessionParams = @{
+                ConfigurationName = 'Microsoft.Exchange'
+                ConnectionUri     = "http://$($env:ExchHost)/powershell"
+                Credential        = $UserCredentials
+                AllowRedirection  = $true
+                Name              = 'Exchange'
+            }
+            $session = New-PSSession @sessionParams
             Import-PSSession $session
             $env:ExSession = $session.Name
             Write-Verbose 'Successfully connected to Exchange.'
