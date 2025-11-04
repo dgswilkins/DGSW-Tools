@@ -34,7 +34,7 @@ function Connect-LocalExchange {
                 AllowRedirection  = $true
                 Name              = 'Exchange'
             }
-            $session = New-PSSession @sessionParams
+            $session = New-PSSession @sessionParams // DevSkim: ignore DS137138 Required by exchange connection
             Import-PSSession $session
             $env:ExSession = $session.Name
             Write-Verbose 'Successfully connected to Exchange.'
