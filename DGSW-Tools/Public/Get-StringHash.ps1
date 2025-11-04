@@ -20,6 +20,9 @@ function Get-StringHash {
     )
 
     begin {
+        if ($null -eq $String -or $String -eq '') {
+            throw "No string was provided to hash."
+        }
         switch ($HashName.ToUpper()) {
             'SHA256' { 
                 $algo = [System.Security.Cryptography.SHA256]::Create() 
