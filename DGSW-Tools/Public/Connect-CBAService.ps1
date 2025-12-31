@@ -152,37 +152,37 @@ function Connect-CBAService {
     # Connect to Exchange Online
     if ($ExchangeOnline -or $AllServices) {
         if (-not (Get-ConnectionInformation)) {
-        Write-Verbose 'Connecting to Exchange Online'
-        try {
-            #ensure the the exchangeonline module is available
-            Import-Module ExchangeOnlineManagement -ErrorAction Stop
-            $organization = $env:O365tenant
-            $ExOappId = $env:ExOappId
-            $thumbprint = Get-CertificateThumbprint -SubjectPattern $env:ExOCert
-            if ($CommandName -eq 'True' -or !$CommandName) {
-                Write-Verbose 'No commands specified, loading all commands'
-                $connectExchangeOnlineParams = @{
-                    AppId                 = $ExOappId
-                    CertificateThumbprint = $thumbprint
-                    Organization          = $organization
-                    ShowBanner            = $showBanner
+            Write-Verbose 'Connecting to Exchange Online'
+            try {
+                #ensure the the exchangeonline module is available
+                Import-Module ExchangeOnlineManagement -ErrorAction Stop
+                $organization = $env:O365tenant
+                $ExOappId = $env:ExOappId
+                $thumbprint = Get-CertificateThumbprint -SubjectPattern $env:ExOCert
+                if ($CommandName -eq 'True' -or !$CommandName) {
+                    Write-Verbose 'No commands specified, loading all commands'
+                    $connectExchangeOnlineParams = @{
+                        AppId                 = $ExOappId
+                        CertificateThumbprint = $thumbprint
+                        Organization          = $organization
+                        ShowBanner            = $showBanner
+                    }
+                } else {
+                    [string]$CommandString = $CommandName -join ','
+                    Write-Verbose "Only loading specified commands: [$CommandString]"
+                    $connectExchangeOnlineParams = @{
+                        AppId                 = $ExOappId
+                        CertificateThumbprint = $thumbprint
+                        Organization          = $organization
+                        ShowBanner            = $showBanner
+                        CommandName           = $CommandString
+                    }
                 }
-            } else {
-                [string]$CommandString = $CommandName -join ','
-                Write-Verbose "Only loading specified commands: [$CommandString]"
-                $connectExchangeOnlineParams = @{
-                    AppId                 = $ExOappId
-                    CertificateThumbprint = $thumbprint
-                    Organization          = $organization
-                    ShowBanner            = $showBanner
-                    CommandName           = $CommandString
-                }
-            }
-            Connect-ExchangeOnline @connectExchangeOnlineParams -ErrorAction Stop
-            Write-Verbose 'Successfully connected to Exchange Online.'
-        } catch {
-            # report the error message
-            Write-Error "Could not connect to Exchange Online service.[ $_ ]"
+                Connect-ExchangeOnline @connectExchangeOnlineParams -ErrorAction Stop
+                Write-Verbose 'Successfully connected to Exchange Online.'
+            } catch {
+                # report the error message
+                Write-Error "Could not connect to Exchange Online service.[ $_ ]"
             } 
         } else {
             Write-Verbose 'Already connected to Exchange Online.'
@@ -192,21 +192,21 @@ function Connect-CBAService {
     # Connect to Graph
     if ($Graph -or $AllServices) {
         if (-not (Get-MgContext)) {
-        Write-Verbose 'Connecting to Graph'
-        try {
-            $thumbprint = Get-CertificateThumbprint -SubjectPattern $env:MSGraphCert
-            $GraphAppId = $env:GraphAppId
-            $tenantID = $env:O365tenant
-            $connectGraphParams = @{
-                ApplicationId         = $GraphAppId
-                CertificateThumbprint = $thumbprint
-                Tenant                = $tenantID
-                NoWelcome             = $noWelcome
-            }
-            Connect-MgGraph @connectGraphParams -ErrorAction Stop
-            Write-Verbose 'Successfully connected to Graph.'
-        } catch {
-            Write-Error "Could not connect to Graph service.[ $_ ]"
+            Write-Verbose 'Connecting to Graph'
+            try {
+                $thumbprint = Get-CertificateThumbprint -SubjectPattern $env:MSGraphCert
+                $GraphAppId = $env:GraphAppId
+                $tenantID = $env:O365tenant
+                $connectGraphParams = @{
+                    ApplicationId         = $GraphAppId
+                    CertificateThumbprint = $thumbprint
+                    Tenant                = $tenantID
+                    NoWelcome             = $noWelcome
+                }
+                Connect-MgGraph @connectGraphParams -ErrorAction Stop
+                Write-Verbose 'Successfully connected to Graph.'
+            } catch {
+                Write-Error "Could not connect to Graph service.[ $_ ]"
             }
         } else {
             Write-Verbose 'Already connected to Graph.'
