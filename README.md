@@ -13,8 +13,10 @@ This module contains functions for daily use. Currently defined:
 <dd>Connects to a VMware vCenter server using PowerCLI</dd>
 <dt>Connect-VMConsole<dt>
 <dd>Opens a Hyper-V VM console window for the specified virtual machine</dd>
+<dt>Find-GraphEmails</dt>
+<dd>Finds emails older than a specified date in folders and subfolders using the graph API and optionally, delete them</dd>
 <dt>Find-OutlookEmails</dt>
-<dd>Finds emails older than a specified date in Outlook folders and subfolders and optionally, delete them</dd>
+<dd>Finds emails older than a specified date in Outlook folders and subfolders and optionally, delete them. Uses the Outlook COM interface</dd>
 <dt>Get-MyPublicIP<dt>
 <dd>Retrieves the public IPv4 and IPv6 addresses of the current machine.</dd>
 <dt>Get-SavedCred<dt>
