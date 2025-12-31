@@ -151,6 +151,7 @@ function Connect-CBAService {
 
     # Connect to Exchange Online
     if ($ExchangeOnline -or $AllServices) {
+        if (-not (Get-ConnectionInformation)) {
         Write-Verbose 'Connecting to Exchange Online'
         try {
             #ensure the the exchangeonline module is available
@@ -182,11 +183,15 @@ function Connect-CBAService {
         } catch {
             # report the error message
             Write-Error "Could not connect to Exchange Online service.[ $_ ]"
+            } 
+        } else {
+            Write-Verbose 'Already connected to Exchange Online.'
         }
     }   
 
     # Connect to Graph
     if ($Graph -or $AllServices) {
+        if (-not (Get-MgContext)) {
         Write-Verbose 'Connecting to Graph'
         try {
             $thumbprint = Get-CertificateThumbprint -SubjectPattern $env:MSGraphCert
@@ -202,6 +207,9 @@ function Connect-CBAService {
             Write-Verbose 'Successfully connected to Graph.'
         } catch {
             Write-Error "Could not connect to Graph service.[ $_ ]"
+            }
+        } else {
+            Write-Verbose 'Already connected to Graph.'
         }
     }
 
