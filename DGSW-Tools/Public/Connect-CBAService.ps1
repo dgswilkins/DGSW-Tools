@@ -48,6 +48,13 @@ function Connect-CBAService {
         [Parameter(ParameterSetName = 'AllServices')][switch]$AllServices
     )
 
+    $showBanner = $false
+    $noWelcome = $true
+    if ($PSBoundParameters.ContainsKey('Verbose') -or $VerbosePreference -eq 'Continue') {
+        $showBanner = $true
+        $noWelcome = $false 
+    }
+
     switch ($psCmdlet.ParameterSetName) {
         'IndividualService' {
             if (!($Az -or $AzureAD -or $Compliance -or $ExchangeOnline -or $Graph -or $PnpOnline)) {
@@ -133,7 +140,7 @@ function Connect-CBAService {
                 AppId                 = $ExOappId
                 CertificateThumbprint = $thumbprint
                 Organization          = $organization
-                ShowBanner            = $false
+                ShowBanner            = $showBanner
             }
             Connect-IPPSSession @connectComplianceParams -ErrorAction Stop
             Write-Verbose 'Successfully connected to Compliance Center.'
@@ -157,7 +164,7 @@ function Connect-CBAService {
                     AppId                 = $ExOappId
                     CertificateThumbprint = $thumbprint
                     Organization          = $organization
-                    ShowBanner            = $false
+                    ShowBanner            = $showBanner
                 }
             } else {
                 [string]$CommandString = $CommandName -join ','
@@ -166,7 +173,7 @@ function Connect-CBAService {
                     AppId                 = $ExOappId
                     CertificateThumbprint = $thumbprint
                     Organization          = $organization
-                    ShowBanner            = $false
+                    ShowBanner            = $showBanner
                     CommandName           = $CommandString
                 }
             }
@@ -189,6 +196,7 @@ function Connect-CBAService {
                 ApplicationId         = $GraphAppId
                 CertificateThumbprint = $thumbprint
                 Tenant                = $tenantID
+                NoWelcome             = $noWelcome
             }
             Connect-MgGraph @connectGraphParams -ErrorAction Stop
             Write-Verbose 'Successfully connected to Graph.'
