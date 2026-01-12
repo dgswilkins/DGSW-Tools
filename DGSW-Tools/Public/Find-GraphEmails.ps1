@@ -52,7 +52,7 @@ function Find-GraphEmails {
     )
 
     # Calculate cutoff date from DaysBack
-    $CutoffDate = (Get-Date).AddDays(-$DaysBack)
+    $CutoffDate = (Get-Date -Hour 0 -Minute 0 -Second 0 -Millisecond 0).AddDays(-$DaysBack)
 
     # Ensure Microsoft.Graph module is available
     if (-not (Get-Module -ListAvailable -Name Microsoft.Graph)) {
